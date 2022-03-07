@@ -21,7 +21,7 @@ import {
 import { ElementModQ,
     // TWO_MOD_Q,
     ElementModP,
-    // rand_q,
+    rand_q
     // add_q,
     // R
 } from "./group"
@@ -236,6 +236,10 @@ export function encrypt_ballot(ballot: PlaintextBallot,
                                should_verify_proofs  = true):
     (CiphertextBallot | null | undefined) {
     should_verify_proofs;
+
+    if (nonce == undefined) {
+      nonce = rand_q()
+    }
 
     // const inputs = from_file_to_class();
     const nonce_seed = hash_elems([internal_manifest.manifest_hash, ballot.object_id, nonce]);
