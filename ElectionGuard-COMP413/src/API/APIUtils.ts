@@ -198,7 +198,7 @@ export function buildManifest(manifest: any): Manifest {
 
     const election_scope_id: string = manifest.election_scope_id;
     const spec_version = manifest.spec_version;
-    const type: ElectionType = ElectionType.unknown;
+    const type: ElectionType = manifest.type;
     const start_date: Date = manifest.start_date;
     const end_date: Date = manifest.end_date;
 
@@ -213,19 +213,13 @@ export function buildManifest(manifest: any): Manifest {
     // same as name of this election
     const name = interText;
 
-    const emailAnnotation : AnnotatedString = new AnnotatedString("office", "a@b.c");
-    const phoneAnnotation : AnnotatedString = new AnnotatedString("office", "111-111-1111");
-    const contactInfo : ContactInformation = new ContactInformation(["6100 Main St, Houston, TX"], [emailAnnotation], [phoneAnnotation], "Rice University");
-
-
-
     geopolitical_units = buildGeopoliticalUnit(manifest);
     parties = buildParty(manifest);
     candidates = buildCandidate(manifest);
     contests = buildContest(manifest);
     ballot_styles = buildBallotStyle(manifest);
 
-    return new Manifest(election_scope_id, spec_version, type, start_date, end_date, geopolitical_units, parties, candidates, contests, ballot_styles, name, contactInfo);
+    return new Manifest(election_scope_id, spec_version, type, start_date, end_date, geopolitical_units, parties, candidates, contests, ballot_styles, name, undefined);
 }
 
 /**
@@ -235,7 +229,7 @@ export function buildManifest(manifest: any): Manifest {
 export function buildGeopoliticalUnit(manifest: any): GeopoliticalUnit[] {
     const object_id = manifest.geopolitical_units[0].object_id;
     const name = manifest.geopolitical_units[0].name;
-    const type : ReportingUnitType = ReportingUnitType.precinct;
+    const type : ReportingUnitType = ReportingUnitType[manifest.geopolitical_units[0].type];
 
     return [new GeopoliticalUnit(object_id, name, type)];
 }
@@ -281,7 +275,11 @@ export function buildContest(manifest: any): ContestDescription[] {
         const object_id = manifest.contests[i].object_id;
         const sequence_order = manifest.contests[i].sequence_order;
         const electoral_district_id = manifest.contests[i].electoral_district_id;
-        const vote_variation = VoteVariationType.unknown;
+        const vote_variation = VoteVariationType[manifest.contests[i].vote_variation];
+        const ballot_title_lang = new Language(manifest.contests[i].ballot_title.text[0].value, "en");
+        const ballot_title = new InternationalizedText([ballot_title_lang])
+        const ballot_subtitle_lang = new Language(manifest.contests[i].ballot_subtitle.text[0].value, "en");
+        const ballot_subtitle = new InternationalizedText([ballot_subtitle_lang])
         // number of candidates are elected
         const number_elected = manifest.contests[i].number_elected;
         const votes_allowed = manifest.contests[i].votes_allowed;
@@ -294,7 +292,18 @@ export function buildContest(manifest: any): ContestDescription[] {
             const selection = new SelectionDescription(option_object_id, option_sequence_order, option_candidate_id);
             ballot_selections.push(selection);
         }
-        const description = new ContestDescription(object_id, sequence_order, electoral_district_id, vote_variation, number_elected, name, ballot_selections, votes_allowed, undefined, undefined);
+        const description = new ContestDescription(
+          object_id,
+          sequence_order,
+          electoral_district_id,
+          vote_variation,
+          number_elected,
+          name,
+          ballot_selections,
+          votes_allowed,
+          ballot_title,
+          ballot_subtitle
+        );
         descriptions.push(description);
     }
     return descriptions;
