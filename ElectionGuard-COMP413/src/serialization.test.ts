@@ -3,16 +3,13 @@ import {
 } from "./simple_elections";
 import {get_optional} from "./utils";
 import {
-  encrypt_compatible_testing_demo,
   from_file_to_class,
-  from_file_to_class_manifest,
-  from_file_to_PlaintextBallots,
   from_test_file_to_valid_inputs,
   EncryptInput
 } from "./serialization";
 import {
   make_ciphertext_election_context,
-  PlaintextBallot } from "./simple_election_data";
+  } from "./simple_election_data";
 import { ElementModQ,ElementModP } from "./group";
 
 import {InternalManifest} from "./manifest";
@@ -21,6 +18,7 @@ import * as fs from "fs";
 describe("TestDeserialization", () => {
 
   // Test encryption with decryption
+  /*
   test('testConvertJsonFileToObj', () => {
     if (!fs.existsSync('encrypted_data/' )){
       fs.mkdirSync('encrypted_data/');
@@ -49,6 +47,7 @@ describe("TestDeserialization", () => {
     }
    });
   });
+  */
 
   // Test encryption with given test vectors
   test('testTestVectors', () => {
