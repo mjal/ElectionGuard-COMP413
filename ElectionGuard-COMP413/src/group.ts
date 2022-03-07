@@ -100,8 +100,11 @@ class ElementModQ {
     }
 
     toJSON():string {
-        // return this.elem.toString().toUpperCase();
-        return this.elem.toString(16).toUpperCase();
+        var value = this.elem.toString(16).toUpperCase();
+        if (value.length % 2) {
+          value = '0' + value;
+        }
+        return value;
 
     }
 
@@ -169,7 +172,11 @@ class ElementModP {
 
 
     toJSON():string {
-      return this.elem.toString(16).toUpperCase();
+        var value = this.elem.toString(16).toUpperCase();
+        if (value.length % 2) {
+          value = '0' + value;
+        }
+        return value;
     //   return this.elem.toString().toUpperCase();
 
     }

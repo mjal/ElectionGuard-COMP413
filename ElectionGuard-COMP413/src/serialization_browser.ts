@@ -251,7 +251,11 @@ export const deserialize_toHex_banlist:string[] = ["timestamp"];
 export function serialize_compatible_CiphertextBallot(encrypted_ballot: CiphertextBallot): string{
   return JSON.stringify(encrypted_ballot, (key, value) => {
     if (typeof value === "bigint") {
-      return value.toString();
+      v = value.toString();
+      if (v.length % 2) {
+        v = '0' + v;
+      }
+      return v;
     }
     else if (typeof value === "number" && !deserialize_toHex_banlist.includes(key)) {
       return value.toString(10);
