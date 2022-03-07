@@ -1,3 +1,5 @@
+import * as crypto from "crypto"; // nodejs
+
 // Helper functions for group.test.ts
 import {ElementModQ, ElementModP, Q, P, int_to_q_unchecked, int_to_p_unchecked} from './group';
 const elements_mod_q: () => ElementModQ = () => {
@@ -16,15 +18,20 @@ const elements_mod_p_no_zero: () => ElementModP = () => {
     return int_to_p_unchecked(getRandomIntExclusive(P));
 }
 
-// returns BigInt 0 to (range non inclusive)
-// solution found: https://codereview.stackexchange.com/questions/230992/javascript-random-bigint
 const getRandomIntExclusive: (range: bigint) => bigint = (range) => {
-    const rand = [];
-    let digits = range.toString().length / 9 + 2 | 0;
-    while (digits--) {
-        rand.push(("" + (Math.random() * 1000000000 | 0)).padStart(9, "0"));
+    const ab = new Uint32Array(32);
+    if (window?.crypto?.getRandomValues)
+    {
+        window.crypto.getRandomValues(ab);
     }
-    return BigInt(rand.join("")) % range;  // Leading zeros are ignored
+    else if (crypto && (crypto as any).randomFillSync)
+    {
+        (crypto as any).randomFillSync(ab)
+    }
+    else
+      throw "Cannot get random value"
+
+    return BigInt((new Array(...ab)).map(e => String(e)).join("")) % range
 }
 
 // Convert decimal strings to Hex with JS BigInts
