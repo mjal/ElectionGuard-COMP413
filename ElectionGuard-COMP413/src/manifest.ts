@@ -688,18 +688,12 @@ export class Manifest extends CryptoHashable {
   }
 
   crypto_hash(): ElementModQ {
-    //TODO: date object to ISO date string
-    // let st = new Date("2000-01-01T00:00:00");
-    let start_date = moment(this.start_date).format();
-    start_date = start_date.slice(0, start_date.length - 6) + "Z";
-    let end_date = moment(this.end_date).format();
-    end_date = end_date.slice(0, end_date.length - 6) + "Z";
+    let start_date = moment.utc(this.start_date).format();
+    let end_date = moment.utc(this.end_date).format();
 
     return hash_elems([
       this.election_scope_id,
       this.type.toString(),
-      // "2000-01-01T00:00:00Z",
-      // "2000-01-01T00:00:00Z",
       start_date,
       end_date,
       this.name,
